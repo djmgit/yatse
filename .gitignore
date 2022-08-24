@@ -1,0 +1,11 @@
+yatseenv/
+*.pyc
+.ve/
+.cache/
+__pycache__
+*.swp
+*.egg-info/
+MANIFEST
+*.data.cache
+dist/
+build/
