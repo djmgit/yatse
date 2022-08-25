@@ -1,3 +1,7 @@
+from dataclasses import dataclass
+from typing import Dict, List
+
+
 STOPWORDS = ["i",
 "me",
 "my",
@@ -125,3 +129,10 @@ STOPWORDS = ["i",
 "don",
 "should",
 "now"]
+
+@dataclass
+class Term:
+
+    matched_docs: List[str]
+    total_matches: int
+    matched_docs_with_pos: Dict[str,List[int]]

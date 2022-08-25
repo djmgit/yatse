@@ -10,6 +10,7 @@ def index(document_id: str, text: str, db_handler: DbHandler):
     terms = create_ngrams(tokens)
     for term, positions in terms.items():
         db_handler.add_term(term, document_id, positions)
+    db_handler.increment_total_doc_count()
 
 def index_file(document_id: str, data_path: str, db_handler: DbHandler):
 

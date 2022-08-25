@@ -11,6 +11,7 @@ class DbHandler:
                                          read_from_replicas=True,
                                          ssl=False, decode_responses=True)
         self.term_prefix = "term_"
+        self.total_docs_key = "total_doc"
         
     def add_term(self, term: str, document_id: str, positions: List[int]):
 
@@ -27,4 +28,18 @@ class DbHandler:
     
     def get_all_terms(self):
 
-        return self.redis_conn.keys("term_*")
+        return self.redis_conn.scan("term_*")
+
+    def increment_total_doc_count(self, delta: int = -1):
+
+        if delta > 1:
+            self.redis_conn.incr(self.total_docs_key, delta)
+            return
+        self.redis_conn.incr(self.total_docs_key)
+
+    def get_total_doc_count(self):
+
+        doc_count = self.redis_conn.get(self.total_docs_key)
+        if not doc_count:
+            return 0
+        return float(doc_count)

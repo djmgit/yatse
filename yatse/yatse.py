@@ -13,3 +13,9 @@ class Yatse:
             index(document_id, text, self.db_handler)
             return
         index_file(document_id, self.data_path, self.db_handler)
+
+
+if __name__ == "__main__":
+
+    y = Yatse(redis_port=7001, cluster_mode=True, data_path="./")
+    y.index("test-1", "this is a test document. It contains nothing much. This is to test Yatse as a search engine.")
