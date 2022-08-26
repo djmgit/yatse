@@ -66,7 +66,6 @@ def collect_results(text: str, data_path: str, db_handler: DbHandler):
             "document_full_path": os.path.join(data_path, document)
         })
     
-    results["documents"].sort(key=lambda x: x["relevance_score"])
-    results["documents"].reverse()
+    results["documents"].sort(key=lambda x: x["relevance_score"], reverse=True)
     results["total_matched_documents"] = len(matched_docs)
     return results

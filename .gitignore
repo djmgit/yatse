@@ -9,3 +9,5 @@ MANIFEST
 *.data.cache
 dist/
 build/
+data
+runner

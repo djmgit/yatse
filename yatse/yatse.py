@@ -1,3 +1,6 @@
+from typing import Dict, List
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from .indexer import index, index_file
 from .db_handler import DbHandler
 from .result_collector import collect_results
@@ -11,9 +14,28 @@ class Yatse:
     def index(self, document_id: str, text: str = ""):
 
         if text != "":
-            index(document_id, text, self.db_handler)
+            index(document_id, text, self.db_handler, data_path=self.data_path)
             return
         index_file(document_id, self.data_path, self.db_handler)
+    
+    def batch_index(self, raw_texts: Dict[str, str] = {}, documents: List[str] = [], concurrency: int = 10):
+
+        futures = []
+        if len(raw_texts) > 0:
+            with ThreadPoolExecutor(max_workers=concurrency) as executer:
+                for document_id, text in raw_texts.items():
+                    futures.append(executer.submit(index, document_id, text, self.db_handler, data_path=self.data_path))
+                for future in as_completed(futures):
+                    _ = future.result()
+        
+        futures = []
+        if len(documents) > 0:
+            with ThreadPoolExecutor(max_workers=concurrency) as executer:
+                for document_id in documents:
+                    futures.append(executer.submit(index_file, document_id, self.data_path, self.db_handler))
+                for future in as_completed(futures):
+                    _ = future.result()
+
 
     def search(self, query: str):
 
@@ -25,7 +47,5 @@ class Yatse:
 
 if __name__ == "__main__":
 
-    y = Yatse(redis_port=7001, cluster_mode=True, data_path="./")
+    y = Yatse(redis_port=7001, cluster_mode=True, data_path="data/")
     y.index("test-1", "this is a test document. It contains nothing much. This is to test Yatse as a search engine.")
-    y.index("test-2", "This document is also about search engines. There are many uses of search engines. Suggestion is one such use. Search engines are every where")
-    print (y.search("engine"))

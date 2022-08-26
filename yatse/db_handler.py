@@ -12,6 +12,7 @@ class DbHandler:
                                          ssl=False, decode_responses=True)
         self.term_prefix = "term_"
         self.total_docs_key = "total_doc"
+        self.documents_key = "documents"
         
     def add_term(self, term: str, document_id: str, positions: List[int]):
 
@@ -43,3 +44,10 @@ class DbHandler:
         if not doc_count:
             return 0
         return float(doc_count)
+
+    def add_document(self, document):
+        if not self.redis_conn.sismember(self.documents_key, document):
+            self.redis_conn.sadd(self.documents_key, document)
+            return True
+        
+        return False
