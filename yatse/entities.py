@@ -136,3 +136,8 @@ class Term:
     matched_docs: List[str]
     total_matches: int
     matched_docs_with_pos: Dict[str,List[int]]
+
+@dataclass
+class SearchedTerms:
+
+    terms: Dict[str,Term]
