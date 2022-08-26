@@ -130,6 +130,8 @@ STOPWORDS = ["i",
 "should",
 "now"]
 
+k1 = 1.2
+
 @dataclass
 class Term:
 

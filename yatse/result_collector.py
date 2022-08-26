@@ -24,7 +24,7 @@ def get_all_matched_docs(terms: SearchedTerms):
 
     docs = set([])
     for _, term_data in terms.terms.items():
-        docs.add(term_data.matched_docs)
+        docs.update(term_data.matched_docs)
 
     return docs
 
@@ -57,12 +57,16 @@ def collect_results(text: str, data_path: str, db_handler: DbHandler):
     matched_docs = get_all_matched_docs(terms)
 
     results = {}
-    results["documents"] = {}
+    results["documents"] = []
     for document in matched_docs:
-        bm25_relevence_score = get_bm25_relevance_score(document, terms)
+        bm25_relevance_score = get_bm25_relevance_score(document, terms, db_handler.get_total_doc_count())
         results["documents"].append({
-            "relevence_socre": bm25_relevence_score,
+            "relevance_score": bm25_relevance_score,
             "document_name": document,
-            "document_full_path": os.path.join(data_path, document),
-            "occurence_count": search_terms_freq_in_doc(terms, document)
+            "document_full_path": os.path.join(data_path, document)
         })
+    
+    results["documents"].sort(key=lambda x: x["relevance_score"])
+    results["documents"].reverse()
+    results["total_matched_documents"] = len(matched_docs)
+    return results
