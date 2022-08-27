@@ -1,3 +1,4 @@
+import logging
 import os
 
 from .bm25_score import get_bm25_relevance_score
@@ -6,8 +7,10 @@ from .entities import Term, SearchedTerms
 from .text_tokenizer import parser
 from .ngram import create_ngrams
 
-def extract_terms(text: str, db_handler: DbHandler):
+logger = logging.getLogger(__name__)
 
+def extract_terms(text: str, db_handler: DbHandler):
+    logger.info("extracting terms from query")
     tokens = parser(text)
     terms = create_ngrams(tokens)
 
@@ -18,6 +21,8 @@ def extract_terms(text: str, db_handler: DbHandler):
                                            total_matches=len(documents.keys()),
                                            matched_docs_with_pos=documents)
     
+    logger.debug(f"Total extracted terms from query : {len(terms_with_docs.terms)}")
+
     return terms_with_docs
 
 def get_all_matched_docs(terms: SearchedTerms):
@@ -26,7 +31,9 @@ def get_all_matched_docs(terms: SearchedTerms):
     for _, term_data in terms.terms.items():
         docs.update(term_data.matched_docs)
 
-    return docs
+    logger.info(f"Total matched documents found : {len(docs)}")
+
+    return list(docs)
 
 def search_terms_freq_in_doc(terms: SearchedTerms, document: str):
 

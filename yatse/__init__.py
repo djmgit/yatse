@@ -1,1 +1,1 @@
-from .yatse import Yatse
+#from .yatse import Yatse

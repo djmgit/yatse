@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, List
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -5,11 +6,15 @@ from .indexer import index, index_file
 from .db_handler import DbHandler
 from .result_collector import collect_results
 
+logger  = logging.getLogger(__name__)
+
 class Yatse:
 
-    def __init__(self, redis_host: str = '127.0.0.1', redis_port=6379, cluster_mode: bool = False, data_path: str = ""):
+    def __init__(self, redis_host: str = '127.0.0.1', redis_port=6379, cluster_mode: bool = False, data_path: str = "", log_level=logging.ERROR):
         self.db_handler: DbHandler = DbHandler(cluster_mode=cluster_mode, host=redis_host, port=redis_port)
         self.data_path = data_path
+        if log_level:
+            logging.basicConfig(level=log_level)
     
     def index(self, document_id: str, text: str = ""):
 
@@ -47,5 +52,6 @@ class Yatse:
 
 if __name__ == "__main__":
 
-    y = Yatse(redis_port=7001, cluster_mode=True, data_path="data/")
+    y = Yatse(redis_port=6379, cluster_mode=False, data_path="data/", log_level=logging.DEBUG)
     y.index("test-1", "this is a test document. It contains nothing much. This is to test Yatse as a search engine.")
+    print (y.search("engine"))
