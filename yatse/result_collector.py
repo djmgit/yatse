@@ -1,5 +1,7 @@
+import datetime
 import logging
 import os
+import time
 
 from .bm25_score import get_bm25_relevance_score
 from .db_handler import DbHandler
@@ -60,6 +62,7 @@ def collect_results(text: str, data_path: str, db_handler: DbHandler):
     }
     """
 
+    search_start_time = time.time()
     terms = extract_terms(text, db_handler)
     matched_docs = get_all_matched_docs(terms)
 
@@ -74,5 +77,10 @@ def collect_results(text: str, data_path: str, db_handler: DbHandler):
         })
     
     results["documents"].sort(key=lambda x: x["relevance_score"], reverse=True)
+    search_end_time = time.time()
+    time_to_search = search_end_time - search_start_time
+    time_to_search_human = datetime.timedelta(seconds=time_to_search)
     results["total_matched_documents"] = len(matched_docs)
+    results["time_taken_seconds"] = time_to_search
+    results["time_taken_human_readable"] = str(time_to_search_human)
     return results

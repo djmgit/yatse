@@ -13,7 +13,7 @@ def get_bm25_relevance_score(document: str, terms: SearchedTerms, total_document
     for term, term_data in terms.terms.items():
         tf = len(term_data.matched_docs_with_pos.get(document, []))
         total_matching_documents = term_data.total_matches
-        idf = math.log((total_documents - total_matching_documents + 1.0) / total_matching_documents) / math.log(1.0 + total_documents)
+        idf = math.log((total_documents - total_matching_documents + 0.5) / (total_matching_documents + 0.5)) / math.log(1.0 + total_documents)
 
         bm25 = tf * idf / (tf + k1)
         bm25_score += bm25

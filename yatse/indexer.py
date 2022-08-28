@@ -1,5 +1,7 @@
+import datetime
 import logging
 import os
+import time
 
 from .db_handler import DbHandler
 from .text_tokenizer import parser
@@ -11,11 +13,15 @@ logger = logging.getLogger(__name__)
 def index(document_id: str, text: str, db_handler: DbHandler, save: bool = True, data_path: str = ""):
 
     logger.info(f"Indexing document : {document_id}")
+    indexing_start_time = time.time()
     tokens = parser(text)
     terms = create_ngrams(tokens)
     for term, positions in terms.items():
         db_handler.add_term(term, document_id, positions)
-    logger.debug(f"Indexed {len(terms)} terms")
+    indexing_end_time = time.time()
+    time_to_index = indexing_end_time - indexing_start_time
+    time_to_index_human = datetime.timedelta(seconds=time_to_index)
+    logger.info(f"Document : {document_id} indexed in {time_to_index}s which is {time_to_index_human}. Terms indexed : {len(terms)}")
 
     if db_handler.add_document(document_id):
         db_handler.increment_total_doc_count()
