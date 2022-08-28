@@ -12,6 +12,33 @@ from .ngram import create_ngrams
 logger = logging.getLogger(__name__)
 
 def extract_terms(text: str, db_handler: DbHandler):
+    """
+    Function to extract all terms from a query.
+
+    It works in pretty similar was as that of processing a text
+    while indexing.
+
+    Returns a structured collection of terms and corresponding data
+    For example
+
+    SearchedTerms(
+        terms = {
+            "term-1": Term(
+                matched_docs=["doc-1", "doc-2"]
+                total_matches=2
+                matched_docs_with_positions={
+                    "doc-1": [1,2],
+                    "doc-2": [5,7]
+                }
+            )
+        }
+    )
+
+    :param text: qeury
+    :param DBHandler: dbhandler for handling db interactions
+
+    :return SearchedTerms: terms with data.
+    """
     logger.info("extracting terms from query")
     tokens = parser(text)
     terms = create_ngrams(tokens)
@@ -28,6 +55,13 @@ def extract_terms(text: str, db_handler: DbHandler):
     return terms_with_docs
 
 def get_all_matched_docs(terms: SearchedTerms):
+    """
+    Function to get all the matched documents from query
+
+    :param terms: collection of terms along with data
+
+    :return List[str]: List of matched documents
+    """
 
     docs = set([])
     for _, term_data in terms.terms.items():

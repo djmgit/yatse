@@ -1,6 +1,15 @@
 from typing import Dict, List
 
 def create_ngrams(tokens: List[str], min_size: int = 3, max_size: int = 6) -> Dict[str, List[int]]:
+    """
+    Function to create edge ngrams with positions.
+
+    :param tokens: list of tokens
+    :param min_size: min size of an ngrams
+    :param max_size: max_size of an ngram
+    
+    :return Dict[str, List[int]]: list of ngrams containing their positions
+    """
 
     terms = {}
     for position, token in enumerate(tokens):

@@ -15,11 +15,23 @@ class DbHandler:
         self.documents_key = "documents"
         
     def add_term(self, term: str, document_id: str, positions: List[int]):
+        """
+        Function to add a term to db
+
+        :param term: a term, usually from edge-ngram list
+        :param document_id: document identifier
+        :param positions: List of positions of where the edge-ngram occurs
+        """
 
         term_key = f'{self.term_prefix}{term}'
         self.redis_conn.hset(term_key, document_id, json.dumps(positions))
     
     def get_term(self, term: str):
+        """
+        Function to get a term
+
+        :param term: A term to search, usually obtained from query
+        """
 
         term_key = f'{self.term_prefix}{term}'
         term_data = self.redis_conn.hgetall(term_key)
@@ -28,10 +40,20 @@ class DbHandler:
         return term_data
     
     def get_all_terms(self):
+        """
+        Function to get all terms in redis
+
+        Note: costly operation since it uses scan
+        """
 
         return self.redis_conn.scan("term_*")
 
     def increment_total_doc_count(self, delta: int = -1):
+        """
+        Function to increment total document count.
+
+        Default increment is 1 or by a delta.
+        """
 
         if delta > 1:
             self.redis_conn.incr(self.total_docs_key, delta)
@@ -39,6 +61,13 @@ class DbHandler:
         self.redis_conn.incr(self.total_docs_key)
 
     def get_total_doc_count(self):
+        """
+        Function to get current total document count.
+
+        Returns count of all the documents currently indexed in redis.
+
+        :return float: count of indexed documents
+        """
 
         doc_count = self.redis_conn.get(self.total_docs_key)
         if not doc_count:
@@ -46,6 +75,11 @@ class DbHandler:
         return float(doc_count)
 
     def add_document(self, document):
+        """
+        Function to add a document identifier to set of existing indexed documents
+
+        :return bool: whether document was added or not. 
+        """
         if not self.redis_conn.sismember(self.documents_key, document):
             self.redis_conn.sadd(self.documents_key, document)
             return True
