@@ -80,7 +80,7 @@ def search_terms_freq_in_doc(terms: SearchedTerms, document: str):
     return tf
 
 
-def collect_results(text: str, data_path: str, db_handler: DbHandler):
+def collect_results(text: str, data_path: str, db_handler: DbHandler, limit=10):
     """
     Function to aggregate search result, rank them
 
@@ -111,6 +111,7 @@ def collect_results(text: str, data_path: str, db_handler: DbHandler):
         })
     
     results["documents"].sort(key=lambda x: x["relevance_score"], reverse=True)
+    results["documents"] = results["documents"][:limit]
     search_end_time = time.time()
     time_to_search = search_end_time - search_start_time
     time_to_search_human = datetime.timedelta(seconds=time_to_search)

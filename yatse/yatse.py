@@ -29,7 +29,7 @@ class Yatse:
             return
         index_file(document_id, self.data_path, self.db_handler)
 
-    def search(self, query: str):
+    def search(self, query: str, limit=10):
         """
         Function to search a query
 
@@ -40,5 +40,5 @@ class Yatse:
 
         if self.db_handler.get_total_doc_count() == 0:
             return {}
-        result = collect_results(query, self.data_path, self.db_handler)
+        result = collect_results(query, self.data_path, self.db_handler, limit=limit)
         return result
