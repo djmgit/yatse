@@ -10,5 +10,5 @@ MANIFEST
 dist/
 build/
 data
-runner
+runner.py
 benchmark.py
