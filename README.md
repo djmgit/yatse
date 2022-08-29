@@ -54,6 +54,9 @@ Indexing roughly works in the following way:
 
 - First it will save the text with name as the document identifier under data_path.
 - Next it will process the text, which includes the usual stuff like removing the punctuations, converting it to lowercase.
-- Stemming is a very popular step while dealing with natural language (mostly english) wherein we extract word roots. For example running becomes run, walked becomes walk etc. However for yatse I chose to go with edge-ngrams.
-- Whats edge-ngram? Lets first understand whats ngram. Ngrams are the tokens generated from a word by moving a window of a fixed size over it. For example lets consider the word "beatutiful". If our ngram window size is 3 then the generated ngrams would be "bea", "eau", "atu", "tut" and so on till the end.
-- Edge-ngram is a modification of ngrams where in instead of moving the window, the left end of the window is kept fixed at the left edge of the world, we start with a fixed size and keep increasing the window size until we reach the end of the word. 
+- Stemming is a very popular step while dealing with natural language (mostly english) wherein we extract word roots. For example running becomes run, walked becomes walk etc. However for yatse I chose to go with **edge-ngrams**.
+- Whats edge-ngram? Lets first understand whats **ngram**. Ngrams are the tokens generated from a word by moving a window of a fixed size over it. For example lets consider the word "python". If our ngram window size is 3 then the generated ngrams would be "pyt", "yth", "tho", "hon"
+- Edge-ngram is a modification of ngrams where in instead of moving the window, the left end of the window is kept fixed at the left edge of the world, we start with a fixed size and keep increasing the window size until we reach the end of the word. For example lets once again consider the word "python" and edge-ngram window start size to be 3. Then the edge-ngrams we end up with are "pyt", "pyth", "pytho", "python".
+- Stemming is sometimes a tricky process for certain words whereas edgie-ngrams allows us to do fuzzy search as well. A obvious drawback of this process is the number of indexed terms increases.
+- Coming back to our indexing process, we create edge-ngrams out of our bag words.
+- Next, we find out where all in the processed text the word containing the edge-ngram occurs and we create a list for that. Finally we create the index in redis by storing the term along with the documents where it has occured as well as the positions in each document.
