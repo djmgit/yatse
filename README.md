@@ -14,7 +14,7 @@ from source.
 - Conversely you can also ```pip3 install -e .```. This will symlink to your source directory, pretty usefull when developing.
 
 Yatse should be installed in your system now. Next you will have to start Redis. You can do it in a number of ways like docker, build from source
-or simply use your package manager to install it. I use ```apt install redis-server``` to install it since I use ubuntu and use systemd to mange'
+or simply use your package manager to install it. I used ```apt install redis-server``` to install it since I use ubuntu and use systemd to mange'
 the Redis process. Anyways, once redis is up and running make sure you are able to connect to the server using redis-cli.
 
 Now we are all set to try out Yatse.
@@ -67,6 +67,7 @@ Indexing roughly works in the following way:
 An example term in redis would look something like:
 ```
 "term_xyz": {
+  # "documet-id": "[positions]"
   "document-1": "[0, 1, 5, 10],
   "document-4": "[1, 8]"
 }
