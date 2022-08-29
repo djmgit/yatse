@@ -49,3 +49,11 @@ Following parameters are supported by the Yatse class contsructor:
 - data_path: The directory path where Yatse will store all raw texts as documents. If you are indexing files directly, then Yatse will assume they are
              present here.
 - log_level: Standard log levels exposed by python logging module. Defaults to logging.INFO.
+
+Indexing roughly works in the following way:
+
+- First it will save the text with name as the document identifier under data_path.
+- Next it will process the text, which includes the usual stuff like removing the punctuations, converting it to lowercase.
+- Stemming is a very popular step while dealing with natural language (mostly english) wherein we extract word roots. For example running becomes run, walked becomes walk etc. However for yatse I chose to go with edge-ngrams.
+- Whats edge-ngram? Lets first understand whats ngram. Ngrams are the tokens generated from a word by moving a window of a fixed size over it. For example lets consider the word "beatutiful". If our ngram window size is 3 then the generated ngrams would be "bea", "eau", "atu", "tut" and so on till the end.
+- Edge-ngram is a modification of ngrams where in instead of moving the window, the left end of the window is kept fixed at the left edge of the world, we start with a fixed size and keep increasing the window size until we reach the end of the word. 
