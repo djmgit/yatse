@@ -60,3 +60,15 @@ Indexing roughly works in the following way:
 - Stemming is sometimes a tricky process for certain words whereas edgie-ngrams allows us to do fuzzy search as well. A obvious drawback of this process is the number of indexed terms increases.
 - Coming back to our indexing process, we create edge-ngrams out of our bag words.
 - Next, we find out where all in the processed text the word containing the edge-ngram occurs and we create a list for that. Finally we create the index in redis by storing the term along with the documents where it has occured as well as the positions in each document.
+
+An example term in redis would look something like:
+```
+"term_xyz": {
+  "document-1": "[0, 1, 5, 10],
+  "document-4": "[1, 8]"
+}
+
+```
+Not to mention each term is a hashset in redis. I could have made each term the root key of a global hashset but I chose to keep them individually in the root space so that in case of redis cluster the terms can get automatically sharded without much of an effort.
+
+Now we have our inverted index created, ready to be searched.
