@@ -41,4 +41,11 @@ yatse.index("test-4", "Yatse will store all these texts as flat files under data
 ```
 In the above snippet we indexed 4 documents
 
+Following parameters are supported by the Yatse class contsructor:
 
+- redis_host: the redis host, defaults to 127.0.0.1
+- redis_port: the redis port, defaults to 6379
+- cluster_mode: if you are running redis in cluster mode, defaults to False
+- data_path: The directory path where Yatse will store all raw texts as documents. If you are indexing files directly, then Yatse will assume they are
+             present here.
+- log_level: Standard log levels exposed by python logging module. Defaults to logging.INFO.
