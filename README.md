@@ -50,6 +50,9 @@ Following parameters are supported by the Yatse class contsructor:
              present here.
 - log_level: Standard log levels exposed by python logging module. Defaults to logging.INFO.
 
+index function is called with two parameters, the document_id and the document_body. If the document_body is not present then yatse assumes that the
+document is present under data_path and tries to read and index it.
+
 Indexing roughly works in the following way:
 
 - First it will save the text with name as the document identifier under data_path.
@@ -72,3 +75,42 @@ An example term in redis would look something like:
 Not to mention each term is a hashset in redis. I could have made each term the root key of a global hashset but I chose to keep them individually in the root space so that in case of redis cluster the terms can get automatically sharded without much of an effort.
 
 Now we have our inverted index created, ready to be searched.
+
+## Searching our index
+
+Searching is also pretty straight forward.
+
+```
+# you have already created an intance of yatse and indexed some texts or files
+# yatse = Yatse(.......)
+# yatse.index(.....)
+# yatse.index(.....)
+
+print (yatse.search("what is yatse"))
+
+'''
+It should give a response of the following format:
+{
+        "total_matched_docs": 1,
+        "time_taken_seconds": <epoch_difference>,
+        "time_taken_human_readable": <epoch_diff_in_hh:mm:ss_format>
+        "documents": [{
+            "relevence_score": 0.005,
+            "document_name": doc-1,
+            "document_full_path": /tmp/doc-1,
+            "occurence_count": 5
+        }]
+}
+'''
+
+```
+
+search function additionally accepts a limit parameter to limit number of results returned.
+
+Search roughly works in the following way:
+
+- Inital steps are pretty much similar to that of indexing.
+- We first process the query, that is remove punctuations and created edge-ngrams out of it.
+- Next we extract the term data from redis.
+- We find out the matched documents and calculate **bm25 relevance** score for each document. Then we sort the documents in descending order with respect to the bm25 relevance score.
+- We also calculate the time taken to generate the response.
